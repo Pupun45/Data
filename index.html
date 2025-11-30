@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vercel API Data Table</title>
+  <style>
+    table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+    th, td { padding: 8px; border: 1px solid black; }
+    button { padding: 5px 10px; }
+  </style>
+</head>
+<body>
+
+<h2>Live Data Table</h2>
+
+<table id="dataTable">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Date Time</th>
+      <th>Voltage</th>
+      <th>DG</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const API = "https://YOUR-VERCEL-URL/api"; // Replace with your deployed Vercel URL
+
+async function loadData() {
+  const res = await fetch(`${API}/data`);
+  const data = await res.json();
+
+  const tbody = document.querySelector("#dataTable tbody");
+  tbody.innerHTML = "";
+
+  data.forEach(item => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${item.id}</td>
+        <td>${item.datetime}</td>
+        <td>${item.voltage}</td>
+        <td>${item.DG}</td>
+        <td>
+          <button onclick="deleteData(${item.id})">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+}
+
+async function deleteData(id) {
+  await fetch(`${API}/delete?id=${id}`);
+  loadData();
+}
+
+loadData();
+</script>
+
+</body>
+</html>
